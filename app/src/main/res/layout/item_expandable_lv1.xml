@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="240dp"
+    android:background="@android:color/white"
+    android:layout_marginBottom="1dp">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerInParent="true"/>
+
+    <LinearLayout
+        android:id="@+id/llContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="1dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/tvThisWeekTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp_12"
+                    android:text="[this week] trade signal 2018-05-15 14:23:15"/>
+
+                <TextView
+                    android:id="@+id/tvThisWeekFutureSell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold"
+                    android:text="sell this week at 14.00123"/>
+
+                <TextView
+                    android:id="@+id/tvThisWeekSpotBuy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold"
+                    android:text="buy spot at 13.89123"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvThisWeekPercent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_24"
+                android:textStyle="bold"
+                android:textColor="@color/premiumColor"
+                android:text="1.00320"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/tvNextWeekTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp_12"
+                    android:text="[this week] trade signal 2018-05-15 14:23:15"/>
+
+                <TextView
+                    android:id="@+id/tvNextWeekFutureSell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold"
+                    android:text="sell this week at 14.00123"/>
+
+                <TextView
+                    android:id="@+id/tvNextWeekSpotBuy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold"
+                    android:text="buy spot at 13.89123"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvNextWeekPercent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_24"
+                android:textStyle="bold"
+                android:textColor="@color/premiumColor"
+                android:text="1.00320"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/tvQuarterTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp_12"
+                    android:text="[this week] trade signal 2018-05-15 14:23:15"/>
+
+                <TextView
+                    android:id="@+id/tvQuarterFutureSell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold"
+                    android:text="sell this week at 14.00123"/>
+
+                <TextView
+                    android:id="@+id/tvQuarterSpotBuy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold"
+                    android:text="buy spot at 13.89123"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvQuarterPercent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_24"
+                android:textStyle="bold"
+                android:textColor="@color/premiumColor"
+                android:text="1.00320"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>
