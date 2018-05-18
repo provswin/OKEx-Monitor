@@ -67,28 +67,28 @@ public class OKDataMonitorManager extends Observable {
             monitor.startMonitor(new OKDataMonitorInterface() {
                 @Override
                 public void postResult(OKDateTickers thisWeek, OKDateTickers nextWeek, OKDateTickers quarter, OKDateTickers spot, String symbol) {
-                    BigDecimal thisWeekSpread = new BigDecimal(thisWeek.getOKTicker
-                            ().getSell()).divide(new BigDecimal(spot.getOKTicker().getBuy
-                            ()), 6, RoundingMode.HALF_UP);
+                    BigDecimal thisWeekSpread = new BigDecimal(thisWeek.getOKTicker().getBuy
+                            ()).divide(new BigDecimal(spot.getOKTicker
+                            ().getSell()), 6, RoundingMode.HALF_UP);
 
-                    BigDecimal nextWeekSpread = new BigDecimal(nextWeek.getOKTicker
-                            ().getSell()).divide(new BigDecimal(spot.getOKTicker().getBuy
-                            ()), 6, RoundingMode.HALF_UP);
+                    BigDecimal nextWeekSpread = new BigDecimal(nextWeek.getOKTicker().getBuy
+                            ()).divide(new BigDecimal(spot.getOKTicker
+                            ().getSell()), 6, RoundingMode.HALF_UP);
 
-                    BigDecimal quarterSpread = new BigDecimal(quarter
-                            .getOKTicker().getSell()).divide(new BigDecimal(spot
-                            .getOKTicker().getBuy()), 6, RoundingMode.HALF_UP);
+                    BigDecimal quarterSpread = new BigDecimal(quarter.getOKTicker().getBuy
+                            ()).divide(new BigDecimal(spot.getOKTicker
+                            ().getSell()), 6, RoundingMode.HALF_UP);
 
                     OKSymbolTickersLevelItem resultItem = new OKSymbolTickersLevelItem();
                     resultItem.setSymbol(symbol);
-                    resultItem.setBuy(spot.getOKTicker().getBuy());
+                    resultItem.setSell(spot.getOKTicker().getSell());
                     resultItem.setDate(spot.getDate());
                     resultItem.setPosition(mSymbols.indexOf(symbol));
-                    resultItem.setThisWeekSell(thisWeek.getOKTicker().getSell());
+                    resultItem.setThisWeekBuy(thisWeek.getOKTicker().getBuy());
                     resultItem.setThisWeekSpread(thisWeekSpread.toString());
-                    resultItem.setNextWeekSell(nextWeek.getOKTicker().getSell());
+                    resultItem.setNextWeekBuy(nextWeek.getOKTicker().getBuy());
                     resultItem.setNextWeekSpread(nextWeekSpread.toString());
-                    resultItem.setQuarterSell(quarter.getOKTicker().getSell());
+                    resultItem.setQuarterBuy(quarter.getOKTicker().getBuy());
                     resultItem.setQuarterSpread(quarterSpread.toString());
                     datas.put(symbol, resultItem);
                     doBusiness(resultItem, symbol);

@@ -1,28 +1,17 @@
 package cn.a4miles.okex_monitor.adapter;
 
-import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.annotation.IdRes;
-import android.support.v4.util.LruCache;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import cn.a4miles.okex_monitor.R;
 import cn.a4miles.okex_monitor.network.OKDataMonitorManager;
@@ -30,11 +19,8 @@ import cn.a4miles.okex_monitor.network.OKDataObserver;
 import cn.a4miles.okex_monitor.util.DensityUtils;
 import cn.a4miles.okex_monitor.util.OKCountDownTimer;
 import cn.a4miles.okex_monitor.util.OKTimeUtil;
-import cn.a4miles.okex_monitor.beans.OKDateTickers;
 import cn.a4miles.okex_monitor.entity.OKSymbolLevelItem;
 import cn.a4miles.okex_monitor.entity.OKSymbolTickersLevelItem;
-import cn.a4miles.okex_monitor.network.OKDataMonitor;
-import cn.a4miles.okex_monitor.network.impl.OKDataMonitorInterface;
 
 /**
  * Created by huhuaxiang on 2018/5/15.
@@ -178,40 +164,23 @@ public class OKExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItem
 
     private void setViewWithTickers(OKSymbolTickersLevelItem item, BaseViewHolder helper) {
         // This Week
-        helper.setText(R.id.tvThisWeekTime, "[this week] trade signal " + OKTimeUtil.getStrDateFromLong
+        helper.setText(R.id.tvTradeTime, "trade signal " + OKTimeUtil.getStrDateFromLong
                 (Long.valueOf(item.getDate()) * 1000, OKTimeUtil.PATTERN_YMDHMS_1));
 
-        helper.setText(R.id.tvThisWeekFutureSell, "sell this week at " +
-                item.getThisWeekSell());
-
-        helper.setText(R.id.tvThisWeekSpotBuy, "buy spot at " +
-                item.getBuy());
+        helper.setText(R.id.tvThisWeekInfo, "bid1: " + item.getThisWeekBuy() + "    spot ask1: " +
+                item.getSell());
 
         helper.setText(R.id.tvThisWeekPercent, item.getThisWeekSpread());
 
         // Next Week
-        helper.setText(R.id.tvNextWeekTime, "[next week] trade signal " + OKTimeUtil.getStrDateFromLong
-                (Long.valueOf(item.getDate()) * 1000, OKTimeUtil
-                        .PATTERN_YMDHMS_1));
-
-        helper.setText(R.id.tvNextWeekFutureSell, "sell next week at " +
-                item.getNextWeekSell());
-
-        helper.setText(R.id.tvNextWeekSpotBuy, "buy spot at " +
-                item.getBuy());
+        helper.setText(R.id.tvNextWeekInfo, "bid1: " + item.getNextWeekBuy() + "    spot ask1: " +
+                item.getSell());
 
         helper.setText(R.id.tvNextWeekPercent, item.getNextWeekSpread());
 
         // Quarter
-        helper.setText(R.id.tvQuarterTime, "[quarter] trade signal " +
-                OKTimeUtil.getStrDateFromLong(Long.valueOf(item.getDate
-                        ()) * 1000, OKTimeUtil.PATTERN_YMDHMS_1));
-
-        helper.setText(R.id.tvQuarterFutureSell, "sell quarter at " +
-                item.getQuarterSell());
-
-        helper.setText(R.id.tvQuarterSpotBuy, "buy spot at " +
-                item.getBuy());
+        helper.setText(R.id.tvQuarterInfo, "bid1: " + item.getQuarterBuy() + "    spot ask1: " +
+                item.getSell());
 
         helper.setText(R.id.tvQuarterPercent, item.getQuarterSpread());
 

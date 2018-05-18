@@ -13,17 +13,17 @@ public class OKSymbolTickersLevelItem implements MultiItemEntity {
 
     private String date;
 
-    private String buy;
+    private String sell;
 
-    private String thisWeekSell;
+    private String thisWeekBuy;
 
     private String thisWeekSpread;
 
-    private String nextWeekSell;
+    private String nextWeekBuy;
 
     private String nextWeekSpread;
 
-    private String quarterSell;
+    private String quarterBuy;
 
     private String quarterSpread;
 
@@ -45,28 +45,20 @@ public class OKSymbolTickersLevelItem implements MultiItemEntity {
         this.date = date;
     }
 
-    public String getBuy() {
-        return buy;
+    public String getSell() {
+        return sell;
     }
 
-    public void setBuy(String buy) {
-        this.buy = buy;
+    public void setSell(String sell) {
+        this.sell = sell;
     }
 
-    public int getPosition() {
-        return position;
+    public String getThisWeekBuy() {
+        return thisWeekBuy;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    public String getThisWeekSell() {
-        return thisWeekSell;
-    }
-
-    public void setThisWeekSell(String thisWeekSell) {
-        this.thisWeekSell = thisWeekSell;
+    public void setThisWeekBuy(String thisWeekBuy) {
+        this.thisWeekBuy = thisWeekBuy;
     }
 
     public String getThisWeekSpread() {
@@ -77,12 +69,12 @@ public class OKSymbolTickersLevelItem implements MultiItemEntity {
         this.thisWeekSpread = thisWeekSpread;
     }
 
-    public String getNextWeekSell() {
-        return nextWeekSell;
+    public String getNextWeekBuy() {
+        return nextWeekBuy;
     }
 
-    public void setNextWeekSell(String nextWeekSell) {
-        this.nextWeekSell = nextWeekSell;
+    public void setNextWeekBuy(String nextWeekBuy) {
+        this.nextWeekBuy = nextWeekBuy;
     }
 
     public String getNextWeekSpread() {
@@ -93,12 +85,12 @@ public class OKSymbolTickersLevelItem implements MultiItemEntity {
         this.nextWeekSpread = nextWeekSpread;
     }
 
-    public String getQuarterSell() {
-        return quarterSell;
+    public String getQuarterBuy() {
+        return quarterBuy;
     }
 
-    public void setQuarterSell(String quarterSell) {
-        this.quarterSell = quarterSell;
+    public void setQuarterBuy(String quarterBuy) {
+        this.quarterBuy = quarterBuy;
     }
 
     public String getQuarterSpread() {
@@ -109,17 +101,25 @@ public class OKSymbolTickersLevelItem implements MultiItemEntity {
         this.quarterSpread = quarterSpread;
     }
 
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
     @Override
     public String toString() {
         return "OKSymbolTickersLevelItem{" +
                 "symbol='" + symbol + '\'' +
                 ", date='" + date + '\'' +
-                ", buy='" + buy + '\'' +
-                ", thisWeekSell='" + thisWeekSell + '\'' +
+                ", sell='" + sell + '\'' +
+                ", thisWeekBuy='" + thisWeekBuy + '\'' +
                 ", thisWeekSpread='" + thisWeekSpread + '\'' +
-                ", nextWeekSell='" + nextWeekSell + '\'' +
+                ", nextWeekBuy='" + nextWeekBuy + '\'' +
                 ", nextWeekSpread='" + nextWeekSpread + '\'' +
-                ", quarterSell='" + quarterSell + '\'' +
+                ", quarterBuy='" + quarterBuy + '\'' +
                 ", quarterSpread='" + quarterSpread + '\'' +
                 ", position=" + position +
                 '}';
