@@ -9,7 +9,7 @@ import cn.a4miles.okex_monitor.adapter.OKExpandableItemAdapter;
  */
 
 public class OKSymbolTickersLevelItem implements MultiItemEntity {
-    private String contractType;
+    private String symbol;
 
     private String date;
 
@@ -29,12 +29,12 @@ public class OKSymbolTickersLevelItem implements MultiItemEntity {
 
     private int position;
 
-    public String getContractType() {
-        return contractType;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public void setContractType(String contractType) {
-        this.contractType = contractType;
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
     public String getDate() {
@@ -112,7 +112,7 @@ public class OKSymbolTickersLevelItem implements MultiItemEntity {
     @Override
     public String toString() {
         return "OKSymbolTickersLevelItem{" +
-                "contractType='" + contractType + '\'' +
+                "symbol='" + symbol + '\'' +
                 ", date='" + date + '\'' +
                 ", buy='" + buy + '\'' +
                 ", thisWeekSell='" + thisWeekSell + '\'' +

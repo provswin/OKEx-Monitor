@@ -1,5 +1,7 @@
 package cn.a4miles.okex_monitor.network;
 
+import android.os.Bundle;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,7 +18,6 @@ import cn.a4miles.okex_monitor.network.impl.OKDataMonitorInterface;
  * @create 2018-05-15 上午9:56
  **/
 public class OKDataMonitor {
-    private OKDataMonitorInterface callback;
     private OKDateTickers mThisWeekFutureTickers, mNextWeekFutureTickers, mQuarterFutureTickers;
     private OKDateTickers mSpotTickers;
     private Timer timer;

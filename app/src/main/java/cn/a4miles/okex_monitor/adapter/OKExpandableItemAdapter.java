@@ -1,7 +1,9 @@
 package cn.a4miles.okex_monitor.adapter;
 
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.IdRes;
+import android.support.v4.util.LruCache;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
@@ -15,11 +17,18 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.a4miles.okex_monitor.R;
+import cn.a4miles.okex_monitor.network.OKDataMonitorManager;
+import cn.a4miles.okex_monitor.network.OKDataObserver;
 import cn.a4miles.okex_monitor.util.DensityUtils;
+import cn.a4miles.okex_monitor.util.OKCountDownTimer;
 import cn.a4miles.okex_monitor.util.OKTimeUtil;
 import cn.a4miles.okex_monitor.beans.OKDateTickers;
 import cn.a4miles.okex_monitor.entity.OKSymbolLevelItem;
@@ -31,15 +40,14 @@ import cn.a4miles.okex_monitor.network.impl.OKDataMonitorInterface;
  * Created by huhuaxiang on 2018/5/15.
  */
 
-public class OKExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, BaseViewHolder> {
+public class OKExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, OKExpandableItemAdapter.ViewHolder> {
     public static final int TYPE_LEVEL_0 = 0;
     public static final int TYPE_LEVEL_1 = 1;
-    private SparseArray<OKDataMonitor> monitors = new SparseArray<>();
-    private HashMap<String, OKSymbolTickersLevelItem> tickersMap = new HashMap<>();
     private long mInterval;
-    private HashMap<String, CountDownTimer> timerMap = new HashMap<>();
+    private OKDataMonitorManager manager;
 
-    public OKExpandableItemAdapter(List<MultiItemEntity> data, long interval) {
+    public  OKExpandableItemAdapter(List<MultiItemEntity> data, long interval, List<String>
+            symbols) {
         super(data);
 
         addItemType(TYPE_LEVEL_0, R.layout.item_expandable_lv0);
@@ -47,23 +55,17 @@ public class OKExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItem
 
         mInterval = interval;
 
-        for (int i = 0; i < data.size(); i++) {
-            monitors.put(i, new OKDataMonitor((((OKSymbolLevelItem) data.get(i))).getSymbol(), mInterval));
-            tickersMap.put(((OKSymbolLevelItem) data.get(i)).getSymbol(), ((OKSymbolLevelItem)
-                    data.get(i)).getSubItem(0));
-        }
+        manager = OKDataMonitorManager.getSingleton(symbols, mInterval);
     }
 
     @Override
-    protected void convert(final BaseViewHolder helper, MultiItemEntity item) {
+    protected void convert(final OKExpandableItemAdapter.ViewHolder helper, MultiItemEntity item) {
         switch (item.getItemType()) {
             case TYPE_LEVEL_0:
                 final OKSymbolLevelItem symbolLevelItem = (OKSymbolLevelItem) item;
                 helper.setText(R.id.tvSymbol, ((OKSymbolLevelItem) item).getSymbol())
                         .setImageResource(R.id.iv, symbolLevelItem.isExpanded() ? R.mipmap.arrow_b : R.mipmap
                                 .arrow_r);
-
-                helper.setText(R.id.tvTimer, "" + mInterval / 1000);
 
                 final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) helper.getView(R.id
                         .progressView).getLayoutParams();
@@ -72,40 +74,51 @@ public class OKExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItem
 
                 // 倒计时10秒，1秒刷新一次数字
                 // 配合网络请求时间
-                final CountDownTimer timer = new CountDownTimer(mInterval + 1000, 1000) {
+                if (helper.countDownTimer != null) {
+                    helper.countDownTimer.cancel();
+                    helper.countDownTimer = null;
+                }
+
+                helper.countDownTimer = new OKCountDownTimer(mInterval, 1000,
+                        symbolLevelItem
+                                .getSymbol()) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        if (timerMap.get(symbolLevelItem.getSymbol()).equals(this)) {
-                            double percent = (millisUntilFinished) / 1000 * 0.1;
-                            params.width = (int) (width * percent);
-                            params.height = DensityUtils.dp2px(mContext, 80);
-                            helper.getView(R.id.progressView).setLayoutParams(params);
-                        }
+                        double percent = (millisUntilFinished) / 1000 * 0.1;
+                        params.width = (int) (width * percent);
+                        params.height = DensityUtils.dp2px(mContext, 80);
+                        helper.getView(R.id.progressView).setLayoutParams(params);
                     }
 
                     @Override
                     public void onFinish() {
                         // 结束后重新计时
-                        if (timerMap.get(symbolLevelItem.getSymbol()).equals(this)) {
-                            double percent = (mInterval) / 1000 * 0.1;
-                            params.width = (int) (width * percent);
-                            params.height = DensityUtils.dp2px(mContext, 80);
-                            helper.getView(R.id.progressView).setLayoutParams(params);
-                            start();
-                        }
+                        double percent = (mInterval) / 1000 * 0.1;
+                        params.width = (int) (width * percent);
+                        params.height = DensityUtils.dp2px(mContext, 80);
+                        helper.getView(R.id.progressView).setLayoutParams(params);
+                        start();
                     }
                 };
 
-                if (!timerMap.containsValue(timer)) {
-                    timerMap.put(symbolLevelItem.getSymbol(), timer);
+                if (helper.observer != null) {
+                    manager.deleteObserver(helper.observer);
+                    helper.observer = null;
                 }
+
+                helper.observer = new OKDataObserver() {
+                    @Override
+                    public void update(Observable o, OKSymbolTickersLevelItem item, String symbol) {
+
+                    }
+                };
 
                 if (symbolLevelItem.isExpanded()) {
                     helper.setVisible(R.id.progressView, true);
-                    timer.start();
+                    helper.countDownTimer.start();
                 } else {
                     helper.setVisible(R.id.progressView, false);
-                    timer.cancel();
+                    helper.countDownTimer.cancel();
                 }
 
                 helper.itemView.setOnClickListener(new View.OnClickListener() {
@@ -114,10 +127,14 @@ public class OKExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItem
                         int pos = helper.getAdapterPosition();
                         if (symbolLevelItem.isExpanded()) {
                             collapse(pos);
-                            OKDataMonitor monitor = monitors.get(symbolLevelItem.getPosition());
-                            monitor.stopMonitor();
+                            manager.stopMonitor(symbolLevelItem.getSymbol());
+                            manager.deleteObserverByKey(symbolLevelItem.getSymbol());
+                            helper.observer = null;
                         } else {
                             expand(pos);
+                            manager.addObserver(symbolLevelItem.getSymbol() + TYPE_LEVEL_0, helper
+                                    .observer);
+                            manager.startMonitor(symbolLevelItem.getSymbol());
                         }
                     }
                 });
@@ -126,66 +143,37 @@ public class OKExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItem
                 final OKSymbolTickersLevelItem symbolTickersLevelItem =
                         (OKSymbolTickersLevelItem) item;
 
-                // 找到当前二级菜单的父Item，并获取Symbol
-                final OKSymbolLevelItem parentItem = (OKSymbolLevelItem) getData().get(getParentPosition
-                        (symbolTickersLevelItem));
-                final String parentSymbol = parentItem.getSymbol();
+                if (helper.observer != null) {
+                    manager.deleteObserver(helper.observer);
+                    helper.observer = null;
+                }
 
-                if (!TextUtils.isEmpty(tickersMap.get(parentSymbol).getContractType())) {
-                    // 如果已经有数据，则显示当前数据后再请求
-                    setViewWithTickers(tickersMap.get(parentSymbol), helper);
+                helper.observer = new OKDataObserver() {
+                    @Override
+                    public void update(Observable o, OKSymbolTickersLevelItem symbolTickersLevelItem, String symbol) {
+                        if (symbol.equals(symbolTickersLevelItem.getSymbol()) && !TextUtils.isEmpty(symbolTickersLevelItem
+                                .getDate())) {
+                            helper.setVisible(R.id.progressBar, false);
+                            helper.setVisible(R.id.llContent, true);
+                            setViewWithTickers(symbolTickersLevelItem, helper);
+                        }
+                    }
+                };
+
+                manager.addObserver(((OKSymbolTickersLevelItem) symbolTickersLevelItem).getSymbol() + TYPE_LEVEL_1, helper.observer);
+
+                OKSymbolTickersLevelItem data = manager.getData(((OKSymbolTickersLevelItem)
+                        symbolTickersLevelItem).getSymbol());
+                if (data != null && !TextUtils.isEmpty(data.getDate())) {
+                    // 如果已经有数据，则显示当前数据
+                    setViewWithTickers(data, helper);
                 } else {
                     helper.setVisible(R.id.progressBar, true);
                     helper.setVisible(R.id.llContent, false);
                 }
-
-                requestTickers(helper, symbolTickersLevelItem, parentItem, parentSymbol);
             }
             break;
         }
-    }
-
-    private void requestTickers(final BaseViewHolder helper, final OKSymbolTickersLevelItem symbolTickersLevelItem, final OKSymbolLevelItem parentItem, final String parentSymbol) {
-        OKDataMonitor monitor = monitors.get(symbolTickersLevelItem.getPosition());
-
-        monitor.startMonitor(new OKDataMonitorInterface() {
-            @Override
-            public void postResult(OKDateTickers thisWeek, OKDateTickers nextWeek,
-                                   OKDateTickers quarter, OKDateTickers spot, String
-                                           symbol) {
-                if (parentSymbol.equals(symbol)) {
-                    helper.setVisible(R.id.progressBar, false);
-                    helper.setVisible(R.id.llContent, true);
-
-                    BigDecimal thisWeekSpread = new BigDecimal(thisWeek.getOKTicker
-                            ().getSell()).divide(new BigDecimal(spot.getOKTicker().getBuy
-                            ()), 6, RoundingMode.HALF_UP);
-
-                    BigDecimal nextWeekSpread = new BigDecimal(nextWeek.getOKTicker
-                            ().getSell()).divide(new BigDecimal(spot.getOKTicker().getBuy
-                            ()), 6, RoundingMode.HALF_UP);
-
-                    BigDecimal quarterSpread = new BigDecimal(quarter
-                            .getOKTicker().getSell()).divide(new BigDecimal(spot
-                            .getOKTicker().getBuy()), 6, RoundingMode.HALF_UP);
-
-                    OKSymbolTickersLevelItem resultItem = new OKSymbolTickersLevelItem();
-                    resultItem.setContractType(symbol);
-                    resultItem.setBuy(spot.getOKTicker().getBuy());
-                    resultItem.setDate(spot.getDate());
-                    resultItem.setPosition(getParentPosition(symbolTickersLevelItem));
-                    resultItem.setThisWeekSell(thisWeek.getOKTicker().getSell());
-                    resultItem.setThisWeekSpread(thisWeekSpread.toString());
-                    resultItem.setNextWeekSell(nextWeek.getOKTicker().getSell());
-                    resultItem.setNextWeekSpread(nextWeekSpread.toString());
-                    resultItem.setQuarterSell(quarter.getOKTicker().getSell());
-                    resultItem.setQuarterSpread(quarterSpread.toString());
-                    tickersMap.put(symbol, resultItem);
-
-                    setViewWithTickers(resultItem, helper);
-                }
-            }
-        });
     }
 
     private void setViewWithTickers(OKSymbolTickersLevelItem item, BaseViewHolder helper) {
@@ -247,6 +235,25 @@ public class OKExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItem
         } else {
             helper.setTextColor(viewId, mContext.getResources
                     ().getColor(R.color.agioColor));
+        }
+    }
+
+    public void resumeAllMonitors() {
+        manager.resumeAllMonitors();
+    }
+
+    public void stopAllMonitors() {
+        manager.stopAllMonitors();
+    }
+
+    public class ViewHolder extends BaseViewHolder {
+
+        OKCountDownTimer countDownTimer;
+
+        OKDataObserver observer;
+
+        public ViewHolder(View view) {
+            super(view);
         }
     }
 }
