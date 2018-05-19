@@ -21,7 +21,6 @@ import java.util.Map;
  * @time 2016/11/12 0012 上午 8:42
  */
 public class OKSPUtils {
-
     /**
      * 保存在手机里面的文件名
      */
@@ -35,11 +34,9 @@ public class OKSPUtils {
      * @param object
      */
     public static void put(Context context, String key, Object object) {
-
         SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-
         if (object instanceof String) {
             editor.putString(key, (String) object);
         } else if (object instanceof Integer) {
@@ -137,10 +134,8 @@ public class OKSPUtils {
     }
 
     public static void saveObject(Context context, String key, Object obj) {
-
         ByteArrayOutputStream bos = null;
         ObjectOutputStream os = null;
-
         try {
             SharedPreferences.Editor sharedata = context.getSharedPreferences(FILE_NAME, 0).edit();
 
@@ -177,7 +172,6 @@ public class OKSPUtils {
 
         ByteArrayInputStream bis = null;
         ObjectInputStream is = null;
-
         try {
             SharedPreferences sharedata = context.getSharedPreferences(FILE_NAME, 0);
             if (sharedata.contains(key)) {
@@ -275,7 +269,6 @@ public class OKSPUtils {
      */
     private static class SharedPreferencesCompat {
         private static final Method sApplyMethod = findApplyMethod();
-
         /**
          * 反射查找apply的方法
          *
