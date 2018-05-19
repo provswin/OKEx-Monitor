@@ -67,31 +67,35 @@ public class OKDataMonitorManager extends Observable {
             monitor.startMonitor(new OKDataMonitorInterface() {
                 @Override
                 public void postResult(OKDateTickers thisWeek, OKDateTickers nextWeek, OKDateTickers quarter, OKDateTickers spot, String symbol) {
-                    BigDecimal thisWeekSpread = new BigDecimal(thisWeek.getOKTicker().getBuy
-                            ()).divide(new BigDecimal(spot.getOKTicker
-                            ().getSell()), 6, RoundingMode.HALF_UP);
+                    try {
+                        BigDecimal thisWeekSpread = new BigDecimal(thisWeek.getOKTicker().getBuy
+                                ()).divide(new BigDecimal(spot.getOKTicker
+                                ().getSell()), 6, RoundingMode.HALF_UP);
 
-                    BigDecimal nextWeekSpread = new BigDecimal(nextWeek.getOKTicker().getBuy
-                            ()).divide(new BigDecimal(spot.getOKTicker
-                            ().getSell()), 6, RoundingMode.HALF_UP);
+                        BigDecimal nextWeekSpread = new BigDecimal(nextWeek.getOKTicker().getBuy
+                                ()).divide(new BigDecimal(spot.getOKTicker
+                                ().getSell()), 6, RoundingMode.HALF_UP);
 
-                    BigDecimal quarterSpread = new BigDecimal(quarter.getOKTicker().getBuy
-                            ()).divide(new BigDecimal(spot.getOKTicker
-                            ().getSell()), 6, RoundingMode.HALF_UP);
+                        BigDecimal quarterSpread = new BigDecimal(quarter.getOKTicker().getBuy
+                                ()).divide(new BigDecimal(spot.getOKTicker
+                                ().getSell()), 6, RoundingMode.HALF_UP);
 
-                    OKSymbolTickersLevelItem resultItem = new OKSymbolTickersLevelItem();
-                    resultItem.setSymbol(symbol);
-                    resultItem.setSell(spot.getOKTicker().getSell());
-                    resultItem.setDate(spot.getDate());
-                    resultItem.setPosition(mSymbols.indexOf(symbol));
-                    resultItem.setThisWeekBuy(thisWeek.getOKTicker().getBuy());
-                    resultItem.setThisWeekSpread(thisWeekSpread.toString());
-                    resultItem.setNextWeekBuy(nextWeek.getOKTicker().getBuy());
-                    resultItem.setNextWeekSpread(nextWeekSpread.toString());
-                    resultItem.setQuarterBuy(quarter.getOKTicker().getBuy());
-                    resultItem.setQuarterSpread(quarterSpread.toString());
-                    datas.put(symbol, resultItem);
-                    doBusiness(resultItem, symbol);
+                        OKSymbolTickersLevelItem resultItem = new OKSymbolTickersLevelItem();
+                        resultItem.setSymbol(symbol);
+                        resultItem.setSell(spot.getOKTicker().getSell());
+                        resultItem.setDate(spot.getDate());
+                        resultItem.setPosition(mSymbols.indexOf(symbol));
+                        resultItem.setThisWeekBuy(thisWeek.getOKTicker().getBuy());
+                        resultItem.setThisWeekSpread(thisWeekSpread.toString());
+                        resultItem.setNextWeekBuy(nextWeek.getOKTicker().getBuy());
+                        resultItem.setNextWeekSpread(nextWeekSpread.toString());
+                        resultItem.setQuarterBuy(quarter.getOKTicker().getBuy());
+                        resultItem.setQuarterSpread(quarterSpread.toString());
+                        datas.put(symbol, resultItem);
+                        doBusiness(resultItem, symbol);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }

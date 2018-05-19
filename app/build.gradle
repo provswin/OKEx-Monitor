@@ -10,7 +10,7 @@ android {
         applicationId "cn.a4miles.okex_monitor"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 4
+        versionCode 3
         versionName "1.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

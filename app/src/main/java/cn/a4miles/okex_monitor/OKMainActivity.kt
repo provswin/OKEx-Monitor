@@ -1,5 +1,8 @@
 package cn.a4miles.okex_monitor
 
+import android.Manifest
+import android.content.*
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -8,19 +11,10 @@ import cn.a4miles.okex_monitor.adapter.OKExpandableItemAdapter
 import cn.a4miles.okex_monitor.entity.OKSymbolLevelItem
 import cn.a4miles.okex_monitor.entity.OKSymbolTickersLevelItem
 import com.chad.library.adapter.base.entity.MultiItemEntity
-import android.content.Intent
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.IntentFilter
-import cn.a4miles.okex_monitor.OKMainActivity.ScreenStatusReceiver
-
-
-
-
-
+import cn.a4miles.okex_monitor.fragment.OKConfirmDialogFragment
+import cn.a4miles.okex_monitor.util.OKSPUtils
 
 class OKMainActivity : AppCompatActivity() {
-
     private lateinit var mRecyclerView: RecyclerView
 
     private lateinit var mAdapter : OKExpandableItemAdapter
@@ -41,20 +35,33 @@ class OKMainActivity : AppCompatActivity() {
 
         mRecyclerView = findViewById(R.id.rv)
 
+        val showed = OKSPUtils.get(this, "proxyTipShowed", false) as Boolean
+
+        if (!showed) {
+            val dialog = OKConfirmDialogFragment.newInstance("该应用需要您开启VPN或代理才可以正常使用", "提示", getString(R.string.confirm), null, false, false,
+                    object : OKConfirmDialogFragment.ConfirmDialogListener {
+                        override fun onPositiveClick(dialog: DialogInterface?, which: Int) {
+                            // 设置share preference
+                            OKSPUtils.put(this@OKMainActivity, "proxyTipShowed", true)
+                        }
+
+                        override fun onNegativeClick(dialog: DialogInterface?, which: Int) {
+
+                        }
+
+                    })
+            dialog.show(fragmentManager, "proxyTips")
+        }
+
         mList = generateData();
 
         mAdapter = OKExpandableItemAdapter(mList, mInterval, symbols.asList())
 
         mRecyclerView.adapter = mAdapter
 
-        mRecyclerView.layoutManager = LinearLayoutManager(this)
+        mRecyclerView.layoutManager = LinearLayoutManager(this@OKMainActivity)
 
         registerSreenStatusReceiver()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(mScreenStatusReceiver)
     }
 
     private fun generateData(): java.util.ArrayList<MultiItemEntity> {
@@ -73,6 +80,11 @@ class OKMainActivity : AppCompatActivity() {
             res.add(symbol)
         }
         return res
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(mScreenStatusReceiver)
     }
 
     private fun registerSreenStatusReceiver() {
